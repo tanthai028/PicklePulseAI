@@ -1,0 +1,44 @@
+.sidebar {
+  width: 16rem;
+  height: 100vh;
+  background-color: $white;
+  border-right: 1px solid rgba($text-secondary, 0.1);
+  padding: $container-padding;
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: $text-primary;
+  }
+
+  &__nav {
+    list-style: none;
+    
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      color: $text-secondary;
+      text-decoration: none;
+      border-radius: $border-radius-sm;
+      @include transition-base;
+
+      &:hover, &.active {
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+      }
+    }
+  }
+} 

@@ -1,0 +1,29 @@
+.main-layout {
+  margin-left: 16rem; // Match sidebar width
+  min-height: 100vh;
+  background-color: $background-light;
+
+  &__content {
+    padding: $container-padding;
+  }
+
+  &__grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  }
+
+  &__section {
+    margin-bottom: 2rem;
+
+    &-header {
+      margin-bottom: 1.5rem;
+      
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $text-primary;
+      }
+    }
+  }
+} 

@@ -1,0 +1,252 @@
+.dashboard {
+  padding: 1.5rem;
+
+  &__header {
+    margin-bottom: 2rem;
+  }
+
+  &__grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to(lg) {
+      grid-template-columns: repeat(12, 1fr);
+    }
+  }
+
+  // Health Stats Module
+  &__health-stats {
+    grid-column: 1 / -1;
+
+    @include respond-to(lg) {
+      grid-column: span 12;
+    }
+
+    @include card;
+    padding: 1.5rem;
+
+    &-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+
+      @include respond-to(md) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include respond-to(lg) {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    &-item {
+      text-align: center;
+      padding: 1.5rem;
+      background: rgba($background-light, 0.5);
+      border-radius: $border-radius-md;
+      @include transition-base;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: $shadow-md;
+      }
+
+      h3 {
+        color: $text-secondary;
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $text-primary;
+        line-height: 1.2;
+      }
+    }
+  }
+
+  // Daily Check-in Module
+  &__check-in {
+    grid-column: 1 / -1;
+
+    @include respond-to(md) {
+      grid-column: span 1;
+    }
+
+    @include respond-to(lg) {
+      grid-column: span 4;
+    }
+
+    @include card;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+
+    &.completed {
+      .content {
+        filter: blur(3px);
+      }
+
+      &::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 4rem;
+        color: $success-color;
+        animation: checkmark 0.5s ease-out forwards;
+      }
+    }
+  }
+
+  // Skills Board Module
+  &__skills-board {
+    grid-column: 1 / -1;
+
+    @include respond-to(md) {
+      grid-column: span 1;
+    }
+
+    @include respond-to(lg) {
+      grid-column: span 8;
+    }
+
+    @include card;
+    padding: 1.5rem;
+    min-height: 400px;
+    
+    &-columns {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      height: calc(100% - 3rem);
+
+      @include respond-to(md) {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+    }
+
+    &-column {
+      background: rgba($background-light, 0.5);
+      padding: 1rem;
+      border-radius: $border-radius-sm;
+      display: flex;
+      flex-direction: column;
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: $text-primary;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba($primary-color, 0.1);
+      }
+    }
+
+    &-item {
+      background: $white;
+      padding: 1rem;
+      border-radius: $border-radius-sm;
+      margin-bottom: 0.75rem;
+      box-shadow: $shadow-sm;
+      @include transition-base;
+      cursor: pointer;
+
+      &:hover {
+        transform: translateX(4px);
+        box-shadow: $shadow-md;
+        background: rgba($primary-color, 0.05);
+      }
+    }
+  }
+
+  // Performance Log Module
+  &__performance-log {
+    grid-column: 1 / -1;
+
+    @include respond-to(lg) {
+      grid-column: span 12;
+    }
+
+    @include card;
+    padding: 1.5rem;
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+
+      th, td {
+        padding: 1rem;
+        text-align: left;
+      }
+
+      th {
+        font-weight: 600;
+        color: $text-primary;
+        position: sticky;
+        top: 0;
+        background: $white;
+        z-index: 1;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background-color: $primary-color;
+          transition: width 0.3s ease;
+        }
+
+        &:hover::after {
+          width: 100%;
+        }
+      }
+
+      td {
+        color: $text-secondary;
+        border-bottom: 1px solid rgba($text-secondary, 0.1);
+      }
+
+      tr {
+        @include transition-base;
+
+        &:hover td {
+          background-color: rgba($primary-color, 0.02);
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes checkmark {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+} 
