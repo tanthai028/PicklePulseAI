@@ -70,7 +70,7 @@ export const signOut = async () => {
 }
 
 export const getCurrentUser = async () => {
-  const authState = await logAuthState('get-user')
+  await logAuthState('get-user')
   const response = await supabase.auth.getUser()
   console.log('👤 Get user response:', {
     success: !!response.data.user,
@@ -95,7 +95,7 @@ export const sendPasswordResetEmail = async (email: string) => {
 }
 
 // Enhanced session listener with debug info
-supabase.auth.onAuthStateChange(async (event, session) => {
+supabase.auth.onAuthStateChange(async (event) => {
   const state = await logAuthState('auth-change')
   console.log('🔄 Auth state changed:', {
     event,
