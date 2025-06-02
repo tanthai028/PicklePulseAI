@@ -21,8 +21,24 @@ import AuthForm from '../components/auth/AuthForm'
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [googleButtonDisabled, setGoogleButtonDisabled] = useState(false)
   const toast = useToast()
   const navigate = useNavigate()
+
+  const handleGoogleClick = () => {
+    if (googleButtonDisabled) return;
+    
+    setGoogleButtonDisabled(true);
+    toast({
+      title: "Coming Soon",
+      description: "Google sign in will be available soon!",
+      status: "info",
+      duration: 3000,
+    });
+
+    // Re-enable after 5 seconds
+    setTimeout(() => setGoogleButtonDisabled(false), 5000);
+  };
 
   const handleSignIn = async (data: { email: string; password: string }) => {
     setIsLoading(true)
@@ -147,14 +163,9 @@ const Auth = () => {
                     h="45px"
                     borderColor="gray.300"
                     _hover={{ bg: 'gray.50' }}
-                    onClick={() => {
-                      toast({
-                        title: "Coming Soon",
-                        description: "Google sign in will be available soon!",
-                        status: "info",
-                        duration: 3000,
-                      })
-                    }}
+                    onClick={handleGoogleClick}
+                    isDisabled={googleButtonDisabled}
+                    opacity={googleButtonDisabled ? 0.6 : 1}
                   >
                     Continue with Google
                   </Button>
@@ -194,14 +205,9 @@ const Auth = () => {
                     h="45px"
                     borderColor="gray.300"
                     _hover={{ bg: 'gray.50' }}
-                    onClick={() => {
-                      toast({
-                        title: "Coming Soon",
-                        description: "Google sign up will be available soon!",
-                        status: "info",
-                        duration: 3000,
-                      })
-                    }}
+                    onClick={handleGoogleClick}
+                    isDisabled={googleButtonDisabled}
+                    opacity={googleButtonDisabled ? 0.6 : 1}
                   >
                     Continue with Google
                   </Button>
