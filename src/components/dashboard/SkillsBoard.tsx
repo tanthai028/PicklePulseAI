@@ -69,7 +69,11 @@ const SkillsBoard = () => {
   const loadSkills = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('No user found')
+      if (!user) {
+        // User not authenticated, silently return
+        setIsLoading(false)
+        return
+      }
 
       const { data, error } = await supabase
         .from('skills')
@@ -86,12 +90,16 @@ const SkillsBoard = () => {
       setSkills(groupedSkills)
     } catch (error) {
       console.error('Error loading skills:', error)
-      toast({
-        title: 'Error loading skills',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
+      // Only show error toast if we have a user and something actually went wrong
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        toast({
+          title: 'Error loading skills',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+      }
     } finally {
       setIsLoading(false)
     }
