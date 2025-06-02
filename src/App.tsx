@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import theme from './theme'
 import Dashboard from './pages/Dashboard'
 import Auth from './pages/Auth'
+import EmailConfirm from './pages/EmailConfirm'
 import PrivateRoute from './components/PrivateRoute'
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/confirm" element={<EmailConfirm />} />
           <Route
             path="/dashboard"
             element={
