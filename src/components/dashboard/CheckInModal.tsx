@@ -168,12 +168,16 @@ const CheckInModal = ({ isOpen, onClose, onComplete }: CheckInModalProps) => {
       const today = new Date().toISOString().split('T')[0]
 
       // First check if an entry already exists for today
-      const { data: existingEntry } = await supabase
+      const { data: existingEntry, error: queryError } = await supabase
         .from('health_stats')
-        .select('id')
+        .select('*')
         .eq('user_id', user.id)
         .eq('date', today)
-        .single()
+        .maybeSingle()
+
+      if (queryError && queryError.code !== '406') {
+        throw queryError
+      }
 
       let error
       if (existingEntry) {

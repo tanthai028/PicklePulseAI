@@ -22,12 +22,16 @@ const Dashboard = () => {
       if (!user) return
 
       const today = new Date().toISOString().split('T')[0]
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('health_stats')
-        .select('id')
+        .select('*')
         .eq('user_id', user.id)
         .eq('date', today)
-        .single()
+        .maybeSingle()
+
+      if (error && error.code !== '406') {
+        throw error
+      }
 
       setCheckInCompleted(!!data)
     } catch (error) {

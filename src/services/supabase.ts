@@ -1,15 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import { Database } from '../types/database.types'
-import { getRedirectURL } from '../utils/auth'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-// const isProd = import.meta.env.PROD
+const isProd = import.meta.env.PROD
 
 // Use production URL in prod, localhost in dev
-// const siteUrl = isProd 
-//   ? 'https://picklepulse.app'
-//   : 'http://localhost:5173'
+const siteUrl = isProd 
+  ? 'https://picklepulse.app'
+  : 'http://localhost:5173'
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Missing Supabase environment variables:', {
@@ -40,7 +39,7 @@ export const signUpWithEmail = async (email: string, password: string) => {
     email,
     password,
     options: {
-      emailRedirectTo: getRedirectURL('/confirm'),
+      emailRedirectTo: `${siteUrl}/confirm`,
     }
   })
   console.log('Sign up response:', response)
@@ -64,7 +63,7 @@ export const getCurrentUser = async () => {
 export const sendPasswordResetEmail = async (email: string) => {
   try {
     return await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: getRedirectURL('/auth?reset=true'),
+      redirectTo: `${siteUrl}/auth?reset=true`,
     })
   } catch (error) {
     console.error('Error sending password reset email:', error)

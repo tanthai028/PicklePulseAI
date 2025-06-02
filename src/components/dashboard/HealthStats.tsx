@@ -70,24 +70,45 @@ const HealthStats = ({ isLoading }: HealthStatsProps) => {
         .gte('date', startDate.toISOString().split('T')[0])
         .lte('date', today.toISOString().split('T')[0])
 
-      if (error) throw error
-
-      if (data && data.length > 0) {
-        // Calculate averages
-        const sums = data.reduce((acc, curr) => ({
-          sleep: acc.sleep + (curr.sleep_hours || 0),
-          hunger: acc.hunger + (curr.hunger || 0),
-          soreness: acc.soreness + (curr.soreness || 0),
-          performance: acc.performance + (curr.performance_rating || 0)
-        }), { sleep: 0, hunger: 0, soreness: 0, performance: 0 })
-
+      if (error) {
+        // Only throw if it's not a 406 error for empty results
+        if (error.code !== '406') {
+          throw error
+        }
+        // If it's a 406, treat it as empty data
         setAverageStats({
-          sleep: Number((sums.sleep / data.length).toFixed(1)),
-          hunger: Number((sums.hunger / data.length).toFixed(1)),
-          soreness: Number((sums.soreness / data.length).toFixed(1)),
-          performance: Number((sums.performance / data.length).toFixed(1))
+          sleep: 0,
+          hunger: 0,
+          soreness: 0,
+          performance: 0
         })
+        return
       }
+
+      if (!data || data.length === 0) {
+        setAverageStats({
+          sleep: 0,
+          hunger: 0,
+          soreness: 0,
+          performance: 0
+        })
+        return
+      }
+
+      // Calculate averages from valid data
+      const sums = data.reduce((acc, curr) => ({
+        sleep: acc.sleep + (curr.sleep_hours || 0),
+        hunger: acc.hunger + (curr.hunger || 0),
+        soreness: acc.soreness + (curr.soreness || 0),
+        performance: acc.performance + (curr.performance_rating || 0)
+      }), { sleep: 0, hunger: 0, soreness: 0, performance: 0 })
+
+      setAverageStats({
+        sleep: Number((sums.sleep / data.length).toFixed(1)),
+        hunger: Number((sums.hunger / data.length).toFixed(1)),
+        soreness: Number((sums.soreness / data.length).toFixed(1)),
+        performance: Number((sums.performance / data.length).toFixed(1))
+      })
     } catch (error) {
       console.error('Error loading average stats:', error)
       // Only show error toast if we have a user and something actually went wrong
