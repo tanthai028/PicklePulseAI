@@ -2,38 +2,26 @@ import { ReactNode } from 'react'
 import {
   Box,
   Flex,
-  HStack,
   IconButton,
-  Button,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  useDisclosure,
+  useColorMode,
   useColorModeValue,
-  Stack,
   Container,
 } from '@chakra-ui/react'
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
+import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
-import { signOut } from '../services/supabase'
+import { signOut } from '../services/auth'
+import { FiUser } from 'react-icons/fi'
 
 interface Props {
   children: ReactNode
 }
 
-const Links = [
-  { name: 'Dashboard', to: '/dashboard' },
-]
-
-const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
-  <RouterLink to={to}>
-    <Button variant="ghost">{children}</Button>
-  </RouterLink>
-)
-
 const Layout = ({ children }: Props) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { colorMode, toggleColorMode } = useColorMode()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
@@ -44,63 +32,91 @@ const Layout = ({ children }: Props) => {
   }
 
   return (
-    <Box maxW="100vw" minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
-      <Box bg={useColorModeValue('white', 'gray.800')} px={4} boxShadow="sm">
-        <Container maxW="container.xl">
+    <Box maxW="100vw" minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
+      <Box 
+        position="sticky"
+        top={0}
+        zIndex={1000}
+        backdropFilter="blur(5px)"
+        bg={useColorModeValue('rgba(255, 255, 255, 0.8)', 'rgba(26, 32, 44, 0.8)')}
+        borderBottom="2px solid"
+        borderColor={useColorModeValue('gray.100', 'gray.700')}
+      >
+        <Container maxW="container.xl" px={{ base: 6, md: 6 }}>
           <Flex h={16} alignItems="center" justifyContent="space-between">
-            <IconButton
-              size="md"
-              icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-              aria-label="Open Menu"
-              display={{ md: 'none' }}
-              onClick={isOpen ? onClose : onOpen}
-            />
-            <HStack spacing={8} alignItems="center">
-              <RouterLink to="/dashboard">
+            <RouterLink to="/dashboard">
+              <Box 
+                className="app-logo"
+                display="flex"
+                alignItems="center"
+                gap={3}
+              >
+                <Box
+                  position="relative"
+                  width="40px"
+                  height="40px"
+                  overflow="hidden"
+                  borderRadius="full"
+                  className="logo-bounce"
+                  boxShadow="sm"
+                >
+                  <Box
+                    as="img"
+                    src="/icon.png"
+                    alt="PicklePulse"
+                    position="absolute"
+                    top="50%"
+                    left="50%"
+                    transform="translate(-50%, -50%)"
+                    width="175%"
+                    height="175%"
+                    objectFit="cover"
+                    loading="eager"
+                  />
+                </Box>
                 <Box 
-                  fontWeight="bold" 
-                  fontSize="xl" 
-                  color="brand.500"
-                  _hover={{ color: 'brand.600', cursor: 'pointer' }}
+                  as="span"
+                  fontSize="2xl"
+                  fontWeight="bold"
+                  fontFamily="'DM Sans', sans-serif"
+                  bgGradient="linear(to-r, blue.400, blue.600)"
+                  bgClip="text"
+                  className="logo-text"
                 >
                   PicklePulse
                 </Box>
-              </RouterLink>
-              <HStack as="nav" spacing={4} display={{ base: 'none', md: 'flex' }}>
-                {Links.map((link) => (
-                  <NavLink key={link.name} to={link.to}>
-                    {link.name}
-                  </NavLink>
-                ))}
-              </HStack>
-            </HStack>
-            <Menu>
-              <MenuButton as={Button} variant="ghost">
-                Profile
-              </MenuButton>
-              <MenuList>
-                <MenuItem as={RouterLink} to="/profile">
-                  Settings
-                </MenuItem>
-                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
+              </Box>
+            </RouterLink>
 
-          {isOpen ? (
-            <Box pb={4} display={{ md: 'none' }}>
-              <Stack as="nav" spacing={4}>
-                {Links.map((link) => (
-                  <NavLink key={link.name} to={link.to}>
-                    {link.name}
-                  </NavLink>
-                ))}
-              </Stack>
-            </Box>
-          ) : null}
+            <Flex alignItems="center" gap={2}>
+              <IconButton
+                aria-label="Toggle dark mode"
+                icon={colorMode === 'dark' ? <SunIcon boxSize={5} /> : <MoonIcon boxSize={5} />}
+                onClick={toggleColorMode}
+                variant="ghost"
+                className="nav-icon"
+                fontSize="xl"
+              />
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  icon={<FiUser size="20px" />}
+                  variant="ghost"
+                  className="nav-icon"
+                  aria-label="User menu"
+                  fontSize="xl"
+                />
+                <MenuList>
+                  <MenuItem onClick={handleSignOut}>
+                    Sign Out
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </Flex>
+          </Flex>
         </Container>
       </Box>
-      <Container maxW="container.xl" py={8}>
+      <Container maxW="container.xl" px={{ base: 3, md: 6 }} py={{ base: 4, md: 8 }}>
         {children}
       </Container>
     </Box>
