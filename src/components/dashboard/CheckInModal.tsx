@@ -165,6 +165,7 @@ const CheckInModal = ({ isOpen, onClose, onComplete }: CheckInModalProps) => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('No user found')
 
+      // Format date as YYYY-MM-DD for Supabase DATE type
       const today = new Date().toISOString().split('T')[0]
 
       // First check if an entry already exists for today

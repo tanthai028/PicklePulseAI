@@ -63,12 +63,16 @@ const HealthStats = ({ isLoading }: HealthStatsProps) => {
       const startDate = new Date(today)
       startDate.setDate(today.getDate() - (timeRange === 'Weekly' ? 7 : timeRange === 'Bi-weekly' ? 14 : 30))
 
+      // Format dates as YYYY-MM-DD for Supabase DATE type
+      const formattedStartDate = startDate.toISOString().split('T')[0]
+      const formattedEndDate = today.toISOString().split('T')[0]
+
       const { data, error } = await supabase
         .from('health_stats')
         .select('*')
         .eq('user_id', user.id)
-        .gte('date', startDate.toISOString().split('T')[0])
-        .lte('date', today.toISOString().split('T')[0])
+        .gte('date', formattedStartDate)
+        .lte('date', formattedEndDate)
 
       if (error) {
         // Only throw if it's not a 406 error for empty results
