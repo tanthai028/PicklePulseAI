@@ -42,6 +42,33 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_logs: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          rating: number
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          rating: number
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          rating?: number
+          notes?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

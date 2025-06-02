@@ -29,7 +29,10 @@ import { supabase } from '../../services/supabase'
 interface Skill {
   id: string
   name: string
-  section: 'planning' | 'practicing'
+  section: string
+  user_id: string
+  created_at: string
+  updated_at: string
 }
 
 interface SkillsState {

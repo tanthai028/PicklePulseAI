@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { supabase } from '../services/supabase'
-import { Box, Spinner, Center } from '@chakra-ui/react'
+import { Spinner, Center } from '@chakra-ui/react'
 
 interface PrivateRouteProps {
   children: React.ReactNode
@@ -15,7 +15,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
   useEffect(() => {
     checkUser()
     
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session)
       setIsLoading(false)
     })

@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Skeleton } from '@chakra-ui/react'
+import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Skeleton, Text } from '@chakra-ui/react'
 import { supabase } from '../../services/supabase'
 
 interface PerformanceEntry {
-  id: number;
-  date: string;
-  location: string;
-  performance: string;
-  notes: string;
+  id: string
+  user_id: string
+  date: string
+  rating: number
+  notes: string | null
+  created_at: string
 }
 
 const PerformanceLog = () => {
@@ -68,12 +69,11 @@ const PerformanceLog = () => {
             </Tr>
           ) : (
             entries.map((entry) => (
-              <Tr key={entry.id}>
-                <Td>{new Date(entry.date).toLocaleDateString()}</Td>
-                <Td>{entry.location}</Td>
-                <Td>{entry.performance}</Td>
-                <Td>{entry.notes}</Td>
-              </Tr>
+              <Box key={entry.id} p={4} borderWidth="1px" borderRadius="lg" mb={4}>
+                <Text fontWeight="bold">Date: {new Date(entry.date).toLocaleDateString()}</Text>
+                <Text>Rating: {entry.rating}</Text>
+                {entry.notes && <Text>Notes: {entry.notes}</Text>}
+              </Box>
             ))
           )}
         </Tbody>
