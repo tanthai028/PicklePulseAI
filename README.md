@@ -1,71 +1,126 @@
 # PicklePulse AI
 
-A health and performance tracking app for athletes, correlating physical stats with gameplay performance. Built with React, TypeScript, and Supabase.
+A modern pickleball analytics and matchmaking platform built with React, TypeScript, and Supabase.
 
 ## Features
 
+### Authentication
+- Email/Password authentication with Supabase
+- Password reset functionality
+- Google OAuth integration (coming soon)
+- Mobile-friendly authentication UI
+- Form validation and error handling
+- Rate limiting for security
+- Session management
+
+### Core Features
 - Health stats tracking (sleep, heart rate, calories)
 - Performance analytics
 - AI-driven insights
 - Team and player tracking
 - PWA support for offline access
 
-## Tech Stack
-
-- **Frontend**: React (TypeScript) + Vite
-- **UI Library**: Chakra UI
-- **Backend/Auth**: Supabase
-- **State Management**: Zustand
-- **Routing**: React Router
-- **PWA Support**: vite-plugin-pwa
-
 ## Getting Started
 
+### Prerequisites
+- Node.js 16+
+- npm or yarn
+- Supabase account
+
+### Environment Setup
 1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+git clone https://github.com/yourusername/picklepulse-ai.git
+cd picklepulse-ai
+```
+
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
+
 3. Create a `.env` file in the root directory with your Supabase credentials:
-   ```
-   VITE_SUPABASE_URL=your-supabase-project-url
-   VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-   ```
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+4. Start the development server
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+## Authentication Flow
+
+The application uses Supabase for authentication with the following features:
+
+1. **Sign Up**
+   - Email/password registration
+   - Email verification
+   - Form validation
+   - Error handling
+
+2. **Sign In**
+   - Email/password login
+   - "Remember me" functionality
+   - Error messages for invalid credentials
+
+3. **Password Reset**
+   - "Forgot Password" functionality
+   - Email-based reset flow
+   - Mobile-friendly reset UI
+   - Success/error notifications
+
+4. **Session Management**
+   - Automatic session handling
+   - Protected routes
+   - Logout functionality
+
+## Tech Stack
+
+- **Frontend Framework**: React with TypeScript
+- **Styling**: Chakra UI
+- **Backend/Auth**: Supabase
+- **Build Tool**: Vite
+- **State Management**: React Context
+- **Form Handling**: Native React forms
+- **Routing**: React Router
 
 ## Development
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## Project Structure
-
+### Project Structure
 ```
 src/
-  ├── components/     # Reusable UI components
-  ├── pages/         # Page components
-  ├── services/      # API and service integrations
-  ├── store/         # State management
-  ├── hooks/         # Custom React hooks
-  ├── utils/         # Utility functions
-  ├── types/         # TypeScript type definitions
-  ├── theme/         # Chakra UI theme customization
-  └── assets/        # Static assets
+  ├── components/        # Reusable components
+  │   └── auth/         # Authentication components
+  ├── pages/            # Page components
+  ├── services/         # API and service integrations
+  ├── types/            # TypeScript type definitions
+  ├── utils/            # Utility functions
+  └── App.tsx          # Main application component
 ```
+
+### Code Style
+- TypeScript for type safety
+- ESLint for code linting
+- Prettier for code formatting
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contact
+
+[Add your contact information]
