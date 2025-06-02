@@ -19,9 +19,10 @@ interface AuthFormProps {
   mode: 'signin' | 'signup'
   onSubmit: (data: { email: string; password: string; name?: string }) => void
   isLoading: boolean
+  onForgotPassword?: () => void
 }
 
-const AuthForm = ({ mode, onSubmit, isLoading }: AuthFormProps) => {
+const AuthForm = ({ mode, onSubmit, isLoading, onForgotPassword }: AuthFormProps) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -66,10 +67,11 @@ const AuthForm = ({ mode, onSubmit, isLoading }: AuthFormProps) => {
         <FormControl isRequired>
           <HStack justify="space-between" mb={1}>
             <FormLabel color="gray.700" fontSize="sm" mb={0}>Password</FormLabel>
-            {mode === 'signin' && (
+            {mode === 'signin' && onForgotPassword && (
               <ChakraLink 
-                as={Link} 
-                to="/forgot-password" 
+                as="button"
+                type="button"
+                onClick={onForgotPassword}
                 color="blue.500" 
                 fontSize="sm"
                 fontWeight="medium"

@@ -13,15 +13,18 @@ import {
   Text,
   useToast,
   Divider,
+  useDisclosure,
 } from '@chakra-ui/react'
 import { FcGoogle } from 'react-icons/fc'
 import { useNavigate } from 'react-router-dom'
 import { signInWithEmail, signUpWithEmail } from '../services/supabase'
 import AuthForm from '../components/auth/AuthForm'
+import ForgotPasswordModal from '../components/auth/ForgotPasswordModal'
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [googleButtonDisabled, setGoogleButtonDisabled] = useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
   const navigate = useNavigate()
 
@@ -190,6 +193,7 @@ const Auth = () => {
                     mode="signin"
                     onSubmit={handleSignIn}
                     isLoading={isLoading}
+                    onForgotPassword={onOpen}
                   />
                 </VStack>
               </TabPanel>
@@ -239,6 +243,8 @@ const Auth = () => {
           </Tabs>
         </VStack>
       </Container>
+
+      <ForgotPasswordModal isOpen={isOpen} onClose={onClose} />
     </Box>
   )
 }

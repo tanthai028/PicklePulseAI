@@ -51,6 +51,17 @@ export const getCurrentUser = async () => {
   return response
 }
 
+export const sendPasswordResetEmail = async (email: string) => {
+  try {
+    return await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth?reset=true`,
+    })
+  } catch (error) {
+    console.error('Error sending password reset email:', error)
+    throw error
+  }
+}
+
 // Add session listener
 supabase.auth.onAuthStateChange((event, session) => {
   console.log('Auth state changed:', event, 'Session:', session)
