@@ -36,7 +36,7 @@ const Auth = () => {
       title: "Guest Mode Activated",
       description: "You're now using the app as a guest. Your data will not be saved.",
       status: "info",
-      duration: 5000,
+      duration: 2500,
     })
     navigate('/dashboard')
   }

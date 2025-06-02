@@ -10,11 +10,13 @@ import {
   useColorMode,
   useColorModeValue,
   Container,
+  Tag,
 } from '@chakra-ui/react'
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { signOut } from '../services/auth'
 import { FiUser } from 'react-icons/fi'
+import { isGuestUser } from '../services/guestMode'
 
 interface Props {
   children: ReactNode
@@ -45,50 +47,27 @@ const Layout = ({ children }: Props) => {
         <Container maxW="container.xl" px={{ base: 6, md: 6 }}>
           <Flex h={16} alignItems="center" justifyContent="space-between">
             <RouterLink to="/dashboard">
-              <Box 
-                className="app-logo"
-                display="flex"
-                alignItems="center"
-                gap={3}
+              <Box
+                fontSize={{ base: "xl", md: "2xl" }}
+                fontWeight="bold"
+                color={useColorModeValue('gray.800', 'white')}
               >
-                <Box
-                  position="relative"
-                  width="40px"
-                  height="40px"
-                  overflow="hidden"
-                  borderRadius="full"
-                  className="logo-bounce"
-                  boxShadow="sm"
-                >
-                  <Box
-                    as="img"
-                    src="/icon.png"
-                    alt="PicklePulse"
-                    position="absolute"
-                    top="50%"
-                    left="50%"
-                    transform="translate(-50%, -50%)"
-                    width="175%"
-                    height="175%"
-                    objectFit="cover"
-                    loading="eager"
-                  />
-                </Box>
-                <Box 
-                  as="span"
-                  fontSize="2xl"
-                  fontWeight="bold"
-                  fontFamily="'DM Sans', sans-serif"
-                  bgGradient="linear(to-r, blue.400, blue.600)"
-                  bgClip="text"
-                  className="logo-text"
-                >
-                  PicklePulse
-                </Box>
+                PicklePulse AI
               </Box>
             </RouterLink>
 
             <Flex alignItems="center" gap={2}>
+              {isGuestUser() && (
+                <Tag
+                  size="md"
+                  variant="subtle"
+                  colorScheme="orange"
+                  borderRadius="full"
+                  px={3}
+                >
+                  Guest Mode
+                </Tag>
+              )}
               <IconButton
                 aria-label="Toggle dark mode"
                 icon={colorMode === 'dark' ? <SunIcon boxSize={5} /> : <MoonIcon boxSize={5} />}
