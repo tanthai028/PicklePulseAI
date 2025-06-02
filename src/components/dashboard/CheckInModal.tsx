@@ -22,6 +22,8 @@ import {
 import { InfoIcon } from '@chakra-ui/icons'
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../../services/supabase'
+import { isGuestUser } from '../../services/guestMode'
+import { saveGuestHealthStat } from '../../services/guestStorage'
 
 interface CheckInModalProps {
   isOpen: boolean
@@ -162,58 +164,62 @@ const CheckInModal = ({ isOpen, onClose, onComplete }: CheckInModalProps) => {
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('No user found')
-
-      // Format date as YYYY-MM-DD for Supabase DATE type
       const today = new Date().toISOString().split('T')[0]
-
-      // First check if an entry already exists for today
-      const { data: existingEntry, error: queryError } = await supabase
-        .from('health_stats')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('date', today)
-        .maybeSingle()
-
-      if (queryError && queryError.code !== '406') {
-        throw queryError
+      const healthData = {
+        date: today,
+        sleep_hours: values.sleep,
+        hunger: values.hunger,
+        soreness: values.soreness,
+        performance_rating: values.performance
       }
 
-      let error
-      if (existingEntry) {
-        // Update existing entry
-        const { error: updateError } = await supabase
-          .from('health_stats')
-          .update({
-            sleep_hours: values.sleep,
-            hunger: values.hunger,
-            soreness: values.soreness,
-            performance_rating: values.performance
-          })
-          .eq('id', existingEntry.id)
-        error = updateError
+      if (isGuestUser()) {
+        // Handle guest mode submission
+        saveGuestHealthStat(healthData)
       } else {
-        // Insert new entry
-        const { error: insertError } = await supabase
-          .from('health_stats')
-          .insert({
-            user_id: user.id,
-            date: today,
-            sleep_hours: values.sleep,
-            hunger: values.hunger,
-            soreness: values.soreness,
-            performance_rating: values.performance
-          })
-        error = insertError
-      }
+        // Handle authenticated user submission
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error('No user found')
 
-      if (error) throw error
+        // First check if an entry already exists for today
+        const { data: existingEntry, error: queryError } = await supabase
+          .from('health_stats')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('date', today)
+          .maybeSingle()
+
+        if (queryError && queryError.code !== '406') {
+          throw queryError
+        }
+
+        let error
+        if (existingEntry) {
+          // Update existing entry
+          const { error: updateError } = await supabase
+            .from('health_stats')
+            .update(healthData)
+            .eq('id', existingEntry.id)
+          error = updateError
+        } else {
+          // Insert new entry
+          const { error: insertError } = await supabase
+            .from('health_stats')
+            .insert({
+              user_id: user.id,
+              ...healthData
+            })
+          error = insertError
+        }
+
+        if (error) throw error
+      }
 
       onClose()
       onComplete()
       toast({
         title: 'Check-in completed',
+        description: isGuestUser() ? 'Data saved locally' : undefined,
         status: 'success',
         duration: 3000,
         isClosable: true,

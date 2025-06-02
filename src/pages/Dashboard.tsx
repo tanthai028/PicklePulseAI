@@ -5,6 +5,8 @@ import { supabase } from '../services/supabase'
 import HealthStats from '../components/dashboard/HealthStats'
 import SkillsBoard from '../components/dashboard/SkillsBoard'
 import CheckInModal from '../components/dashboard/CheckInModal'
+import { isGuestUser } from '../services/guestMode'
+import { hasGuestCheckedInToday } from '../services/guestStorage'
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true)
@@ -18,22 +20,28 @@ const Dashboard = () => {
 
   const checkDailyCheckInStatus = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (isGuestUser()) {
+        // Check guest check-in status from local storage
+        setCheckInCompleted(hasGuestCheckedInToday())
+      } else {
+        // Check authenticated user check-in status from Supabase
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
 
-      const today = new Date().toISOString().split('T')[0]
-      const { data, error } = await supabase
-        .from('health_stats')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('date', today)
-        .maybeSingle()
+        const today = new Date().toISOString().split('T')[0]
+        const { data, error } = await supabase
+          .from('health_stats')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('date', today)
+          .maybeSingle()
 
-      if (error && error.code !== '406') {
-        throw error
+        if (error && error.code !== '406') {
+          throw error
+        }
+
+        setCheckInCompleted(!!data)
       }
-
-      setCheckInCompleted(!!data)
     } catch (error) {
       console.error('Error checking daily check-in status:', error)
     } finally {
@@ -58,7 +66,11 @@ const Dashboard = () => {
         <SimpleGrid columns={{ base: 1, lg: 12 }} spacing={{ base: 4, md: 6 }}>
           {/* Health Stats Card */}
           <Box gridColumn={{ base: "1 / -1", lg: "span 12" }}>
-            <HealthStats isLoading={isLoading} stats={{ sleep: 0, hunger: 0, soreness: 0, performance: 0 }} />
+            <HealthStats 
+              isLoading={isLoading} 
+              stats={{ sleep: 0, hunger: 0, soreness: 0, performance: 0 }} 
+              checkInCompleted={checkInCompleted}
+            />
           </Box>
 
           {/* Skills Board Card */}
@@ -108,17 +120,24 @@ const Dashboard = () => {
         {showSuccessAnimation && (
           <Box
             position="fixed"
-            top="50%"
-            left="50%"
-            transform="translate(-50%, -50%)"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            bg="blackAlpha.200"
+            backdropFilter="blur(2px)"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
             zIndex={1000}
-            fontSize="4xl"
-            color="green.500"
-            opacity={0}
-            filter="blur(10px)"
-            animation="successPop 1s ease-out forwards"
           >
-            ✓
+            <Box
+              fontSize="6xl"
+              color="green.500"
+              animation="scale-in-out 1s ease-in-out"
+            >
+              ✓
+            </Box>
           </Box>
         )}
       </Box>

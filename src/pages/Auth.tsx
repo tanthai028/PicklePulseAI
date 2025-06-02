@@ -14,10 +14,12 @@ import {
   useToast,
   Divider,
   useDisclosure,
+  HStack,
 } from '@chakra-ui/react'
 import { FcGoogle } from 'react-icons/fc'
 import { useNavigate } from 'react-router-dom'
 import { signInWithEmail, signUpWithEmail } from '../services/supabase'
+import { continueAsGuest } from '../services/guestMode'
 import AuthForm from '../components/auth/AuthForm'
 import ForgotPasswordModal from '../components/auth/ForgotPasswordModal'
 
@@ -27,6 +29,17 @@ const Auth = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
   const navigate = useNavigate()
+
+  const handleGuestMode = () => {
+    continueAsGuest()
+    toast({
+      title: "Guest Mode Activated",
+      description: "You're now using the app as a guest. Your data will not be saved.",
+      status: "info",
+      duration: 5000,
+    })
+    navigate('/dashboard')
+  }
 
   const handleGoogleClick = () => {
     if (googleButtonDisabled) return;
@@ -148,6 +161,33 @@ const Auth = () => {
       {/* Auth Content */}
       <Container maxW="md" p={0}>
         <VStack spacing={{ base: 4, md: 8 }} align="stretch">
+          {/* Guest Mode Button */}
+          <Button
+            size="lg"
+            w="100%"
+            h="45px"
+            colorScheme="gray"
+            onClick={handleGuestMode}
+          >
+            Continue as Guest
+          </Button>
+
+          <Box position="relative" py={2} width="100%">
+            <Divider />
+            <Text
+              position="absolute"
+              top="50%"
+              left="50%"
+              transform="translate(-50%, -50%)"
+              bg="white"
+              px={4}
+              fontSize="sm"
+              color="gray.500"
+            >
+              Or sign in to save your data
+            </Text>
+          </Box>
+
           <Tabs isFitted variant="soft-rounded" colorScheme="blue">
             <TabList mb={4}>
               <Tab fontWeight="medium">Sign In</Tab>

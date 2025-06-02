@@ -15,20 +15,30 @@ import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../services/supabase'
 import { useToast } from '@chakra-ui/react'
+import { isGuestUser } from '../../services/guestMode'
+import { getGuestHealthStatsForRange } from '../../services/guestStorage'
 
 type TimeRange = 'Weekly' | 'Bi-weekly' | 'Monthly'
 
-interface HealthStatsProps {
-  stats: {
-    sleep: number;
-    hunger: number;
-    soreness: number;
-    performance: number;
-  };
-  isLoading: boolean;
+interface HealthStat {
+  sleep_hours: number
+  hunger: number
+  soreness: number
+  performance_rating: number
 }
 
-const HealthStats = ({ isLoading }: HealthStatsProps) => {
+interface HealthStatsProps {
+  stats: {
+    sleep: number
+    hunger: number
+    soreness: number
+    performance: number
+  }
+  isLoading: boolean
+  checkInCompleted?: boolean
+}
+
+const HealthStats = ({ isLoading, checkInCompleted }: HealthStatsProps) => {
   const [timeRange, setTimeRange] = useState<TimeRange>('Weekly')
   const [averageStats, setAverageStats] = useState({
     sleep: 0,
@@ -48,48 +58,49 @@ const HealthStats = ({ isLoading }: HealthStatsProps) => {
 
   useEffect(() => {
     loadAverageStats()
-  }, [timeRange])
+  }, [timeRange, checkInCompleted])
 
   const loadAverageStats = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        // User not authenticated, silently return
-        setIsLoadingStats(false)
-        return
-      }
-
       const today = new Date()
       const startDate = new Date(today)
       startDate.setDate(today.getDate() - (timeRange === 'Weekly' ? 7 : timeRange === 'Bi-weekly' ? 14 : 30))
 
-      // Format dates as YYYY-MM-DD for Supabase DATE type
-      const formattedStartDate = startDate.toISOString().split('T')[0]
-      const formattedEndDate = today.toISOString().split('T')[0]
+      let statsData: HealthStat[] = []
 
-      const { data, error } = await supabase
-        .from('health_stats')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('date', formattedStartDate)
-        .lte('date', formattedEndDate)
-
-      if (error) {
-        // Only throw if it's not a 406 error for empty results
-        if (error.code !== '406') {
-          throw error
+      if (isGuestUser()) {
+        // Load guest stats from local storage
+        statsData = getGuestHealthStatsForRange(startDate, today)
+      } else {
+        // Load authenticated user stats from Supabase
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          setIsLoadingStats(false)
+          return
         }
-        // If it's a 406, treat it as empty data
-        setAverageStats({
-          sleep: 0,
-          hunger: 0,
-          soreness: 0,
-          performance: 0
-        })
-        return
+
+        // Format dates as YYYY-MM-DD for Supabase DATE type
+        const formattedStartDate = startDate.toISOString().split('T')[0]
+        const formattedEndDate = today.toISOString().split('T')[0]
+
+        const { data, error } = await supabase
+          .from('health_stats')
+          .select('*')
+          .eq('user_id', user.id)
+          .gte('date', formattedStartDate)
+          .lte('date', formattedEndDate)
+
+        if (error) {
+          if (error.code !== '406') {
+            throw error
+          }
+          statsData = []
+        } else {
+          statsData = (data || []) as HealthStat[]
+        }
       }
 
-      if (!data || data.length === 0) {
+      if (statsData.length === 0) {
         setAverageStats({
           sleep: 0,
           hunger: 0,
@@ -100,7 +111,7 @@ const HealthStats = ({ isLoading }: HealthStatsProps) => {
       }
 
       // Calculate averages from valid data
-      const sums = data.reduce((acc, curr) => ({
+      const sums = statsData.reduce((acc, curr) => ({
         sleep: acc.sleep + (curr.sleep_hours || 0),
         hunger: acc.hunger + (curr.hunger || 0),
         soreness: acc.soreness + (curr.soreness || 0),
@@ -108,16 +119,14 @@ const HealthStats = ({ isLoading }: HealthStatsProps) => {
       }), { sleep: 0, hunger: 0, soreness: 0, performance: 0 })
 
       setAverageStats({
-        sleep: Number((sums.sleep / data.length).toFixed(1)),
-        hunger: Number((sums.hunger / data.length).toFixed(1)),
-        soreness: Number((sums.soreness / data.length).toFixed(1)),
-        performance: Number((sums.performance / data.length).toFixed(1))
+        sleep: Number((sums.sleep / statsData.length).toFixed(1)),
+        hunger: Number((sums.hunger / statsData.length).toFixed(1)),
+        soreness: Number((sums.soreness / statsData.length).toFixed(1)),
+        performance: Number((sums.performance / statsData.length).toFixed(1))
       })
     } catch (error) {
       console.error('Error loading average stats:', error)
-      // Only show error toast if we have a user and something actually went wrong
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
+      if (!isGuestUser()) {
         toast({
           title: 'Error loading stats',
           status: 'error',

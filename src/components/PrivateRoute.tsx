@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { supabase } from '../services/supabase'
 import { Spinner, Center } from '@chakra-ui/react'
+import { isGuestUser } from '../services/guestMode'
 
 interface PrivateRouteProps {
   children: React.ReactNode
@@ -45,8 +46,9 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
     )
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+  // Allow access if user is authenticated or in guest mode
+  if (!isAuthenticated && !isGuestUser()) {
+    return <Navigate to="/auth" state={{ from: location }} replace />
   }
 
   return <>{children}</>

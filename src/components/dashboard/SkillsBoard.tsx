@@ -25,12 +25,14 @@ import {
 import { AddIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../services/supabase'
+import { isGuestUser } from '../../services/guestMode'
+import { getGuestSkills, saveGuestSkill, updateGuestSkill, deleteGuestSkill } from '../../services/guestSkillsStorage'
 
 interface Skill {
   id: string
   name: string
   section: string
-  user_id: string
+  user_id?: string
   created_at: string
   updated_at: string
 }
@@ -68,21 +70,29 @@ const SkillsBoard = () => {
 
   const loadSkills = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        // User not authenticated, silently return
-        setIsLoading(false)
-        return
+      let skillsData: Skill[] = []
+
+      if (isGuestUser()) {
+        // Load guest skills from local storage
+        skillsData = getGuestSkills()
+      } else {
+        // Load authenticated user skills from Supabase
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          setIsLoading(false)
+          return
+        }
+
+        const { data, error } = await supabase
+          .from('skills')
+          .select('*')
+          .eq('user_id', user.id)
+
+        if (error) throw error
+        skillsData = data
       }
 
-      const { data, error } = await supabase
-        .from('skills')
-        .select('*')
-        .eq('user_id', user.id)
-
-      if (error) throw error
-
-      const groupedSkills = data.reduce((acc: SkillsState, skill) => {
+      const groupedSkills = skillsData.reduce((acc: SkillsState, skill) => {
         acc[skill.section as keyof SkillsState].push(skill)
         return acc
       }, { planning: [], practicing: [] })
@@ -91,8 +101,7 @@ const SkillsBoard = () => {
     } catch (error) {
       console.error('Error loading skills:', error)
       // Only show error toast if we have a user and something actually went wrong
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
+      if (!isGuestUser()) {
         toast({
           title: 'Error loading skills',
           status: 'error',
@@ -119,12 +128,19 @@ const SkillsBoard = () => {
 
   const handleDeleteSkill = async (section: string, skillId: string) => {
     try {
-      const { error } = await supabase
-        .from('skills')
-        .delete()
-        .eq('id', skillId)
+      if (isGuestUser()) {
+        // Delete guest skill
+        const success = deleteGuestSkill(skillId)
+        if (!success) throw new Error('Failed to delete skill')
+      } else {
+        // Delete authenticated user skill
+        const { error } = await supabase
+          .from('skills')
+          .delete()
+          .eq('id', skillId)
 
-      if (error) throw error
+        if (error) throw error
+      }
 
       setSkills(prev => ({
         ...prev,
@@ -133,6 +149,7 @@ const SkillsBoard = () => {
 
       toast({
         title: 'Skill deleted',
+        description: isGuestUser() ? 'Data removed locally' : undefined,
         status: 'success',
         duration: 2000,
         isClosable: true,
@@ -160,49 +177,78 @@ const SkillsBoard = () => {
     }
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('No user found')
+      if (isGuestUser()) {
+        if (selectedSkill.skill) {
+          // Update existing guest skill
+          const updatedSkill = updateGuestSkill(selectedSkill.skill.id, { name: newSkillName })
+          if (!updatedSkill) throw new Error('Failed to update skill')
 
-      if (selectedSkill.skill) {
-        // Edit existing skill
-        const { error } = await supabase
-          .from('skills')
-          .update({ name: newSkillName })
-          .eq('id', selectedSkill.skill.id)
-
-        if (error) throw error
-
-        setSkills(prev => ({
-          ...prev,
-          [selectedSkill.section]: prev[selectedSkill.section as keyof SkillsState].map(s => 
-            s.id === selectedSkill.skill?.id 
-              ? { ...s, name: newSkillName }
-              : s
-          )
-        }))
-      } else {
-        // Add new skill
-        const { data, error } = await supabase
-          .from('skills')
-          .insert({
-            user_id: user.id,
+          setSkills(prev => ({
+            ...prev,
+            [selectedSkill.section]: prev[selectedSkill.section as keyof SkillsState].map(s => 
+              s.id === selectedSkill.skill?.id ? updatedSkill : s
+            )
+          }))
+        } else {
+          // Add new guest skill
+          const newSkill = saveGuestSkill({
             name: newSkillName,
             section: selectedSkill.section
           })
-          .select()
-          .single()
+          if (!newSkill) throw new Error('Failed to save skill')
 
-        if (error) throw error
+          setSkills(prev => ({
+            ...prev,
+            [selectedSkill.section]: [...prev[selectedSkill.section as keyof SkillsState], newSkill]
+          }))
+        }
+      } else {
+        // Handle authenticated user skill saving (existing code)
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error('No user found')
 
-        setSkills(prev => ({
-          ...prev,
-          [selectedSkill.section]: [...prev[selectedSkill.section as keyof SkillsState], data]
-        }))
+        if (selectedSkill.skill) {
+          // Edit existing skill
+          const { error } = await supabase
+            .from('skills')
+            .update({ name: newSkillName })
+            .eq('id', selectedSkill.skill.id)
+
+          if (error) throw error
+
+          setSkills(prev => ({
+            ...prev,
+            [selectedSkill.section]: prev[selectedSkill.section as keyof SkillsState].map(s => 
+              s.id === selectedSkill.skill?.id 
+                ? { ...s, name: newSkillName }
+                : s
+            )
+          }))
+        } else {
+          // Add new skill
+          const { data, error } = await supabase
+            .from('skills')
+            .insert({
+              user_id: user.id,
+              name: newSkillName,
+              section: selectedSkill.section
+            })
+            .select()
+            .single()
+
+          if (error) throw error
+
+          setSkills(prev => ({
+            ...prev,
+            [selectedSkill.section]: [...prev[selectedSkill.section as keyof SkillsState], data]
+          }))
+        }
       }
 
       onClose()
       toast({
         title: selectedSkill.skill ? 'Skill updated' : 'Skill added',
+        description: isGuestUser() ? 'Data saved locally' : undefined,
         status: 'success',
         duration: 2000,
         isClosable: true,
