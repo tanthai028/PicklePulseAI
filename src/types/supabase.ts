@@ -38,11 +38,9 @@ export interface Database {
           user_id: string
           date: string
           sleep_hours: number
-          heart_rate: number
-          calories: number
-          mood: number
-          fatigue: number
-          readiness: number
+          hunger: number
+          soreness: number
+          performance_rating: number
           created_at: string
         }
         Insert: {
@@ -50,11 +48,9 @@ export interface Database {
           user_id: string
           date: string
           sleep_hours: number
-          heart_rate: number
-          calories: number
-          mood: number
-          fatigue: number
-          readiness: number
+          hunger: number
+          soreness: number
+          performance_rating: number
           created_at?: string
         }
         Update: {
@@ -62,12 +58,36 @@ export interface Database {
           user_id?: string
           date?: string
           sleep_hours?: number
-          heart_rate?: number
-          calories?: number
-          mood?: number
-          fatigue?: number
-          readiness?: number
+          hunger?: number
+          soreness?: number
+          performance_rating?: number
           created_at?: string
+        }
+      }
+      skills: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          section: 'planning' | 'practicing'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          section: 'planning' | 'practicing'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          section?: 'planning' | 'practicing'
+          created_at?: string
+          updated_at?: string
         }
       }
       performance_logs: {
