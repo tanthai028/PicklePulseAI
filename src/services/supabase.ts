@@ -4,12 +4,12 @@ import { getRedirectURL } from '../utils/auth'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-const isProd = import.meta.env.PROD
+// const isProd = import.meta.env.PROD
 
 // Use production URL in prod, localhost in dev
-const siteUrl = isProd 
-  ? 'https://picklepulse.app'
-  : 'http://localhost:5173'
+// const siteUrl = isProd 
+//   ? 'https://picklepulse.app'
+//   : 'http://localhost:5173'
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Missing Supabase environment variables:', {
