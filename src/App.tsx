@@ -1,13 +1,29 @@
 import { ChakraProvider } from '@chakra-ui/react'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import theme from './theme'
-import AppRoutes from './routes'
+import Dashboard from './pages/Dashboard'
+import Auth from './pages/Auth'
+import PrivateRoute from './components/PrivateRoute'
 
-function App() {
+const App = () => {
   return (
     <ChakraProvider theme={theme}>
       <Router>
-        <AppRoutes />
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          {/* Redirect old auth routes to combined auth page */}
+          <Route path="/login" element={<Navigate to="/auth" replace />} />
+          <Route path="/register" element={<Navigate to="/auth" replace />} />
+        </Routes>
       </Router>
     </ChakraProvider>
   )

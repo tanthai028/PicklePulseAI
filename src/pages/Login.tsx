@@ -6,63 +6,63 @@ import {
   FormLabel,
   Input,
   VStack,
-  Heading,
   Text,
   useToast,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
+  Container,
+  InputGroup,
+  InputRightElement,
+  IconButton,
+  Heading,
+  Image,
+  Checkbox,
+  HStack,
+  Link as ChakraLink,
+  Divider,
 } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { signInWithEmail } from '../services/supabase'
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import { FcGoogle } from 'react-icons/fc'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const toast = useToast()
   const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setError(null)
-
-    console.log('Attempting login with email:', email)
 
     try {
       const { data, error } = await signInWithEmail(email, password)
-      console.log('Login response:', { data, error })
       
       if (error) {
-        // Handle specific error cases
         if (error.message.includes('Email not confirmed')) {
-          setError('Please check your email and confirm your account before logging in.')
-        } else if (error.message.includes('Invalid login credentials')) {
-          setError('Invalid email or password. If you just registered, please confirm your email first.')
+          toast({
+            title: 'Please verify your email',
+            description: 'Check your inbox and confirm your account before logging in.',
+            status: 'warning',
+            duration: 5000,
+          })
         } else {
-          throw error
+          toast({
+            title: 'Login failed',
+            description: 'Invalid email or password.',
+            status: 'error',
+            duration: 3000,
+          })
         }
         return
       }
 
       if (data.user) {
-        console.log('Login successful, user:', data.user)
-        toast({
-          title: 'Login successful',
-          status: 'success',
-          duration: 3000,
-        })
-        
         navigate('/dashboard')
-      } else {
-        throw new Error('No user data received')
       }
     } catch (error: any) {
-      console.error('Login error:', error)
-      setError(error.message)
       toast({
         title: 'Error',
         description: error.message,
@@ -76,70 +76,166 @@ const Login = () => {
 
   return (
     <Box 
-      h="100vh" 
-      w="100vw" 
-      display="flex" 
-      alignItems="center" 
-      justifyContent="center"
+      minH="100vh" 
+      w="100%" 
+      bg="white"
+      py={{ base: 4, md: 12 }}
+      px={{ base: 4, md: 8 }}
     >
-      <Box 
-        w="400px" 
-        bg="white" 
-        p={8} 
-        rounded="lg" 
-        shadow="base"
-      >
-        <VStack spacing={6}>
-          <Heading size="lg">Welcome Back</Heading>
-          
-          {error && (
-            <Alert status="error" rounded="md">
-              <AlertIcon />
-              <AlertTitle>Login Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+      {/* Logo Section */}
+      <Container maxW="md" p={0} mb={{ base: 6, md: 12 }}>
+        <Box
+          width="40px"
+          height="40px"
+          borderRadius="full"
+          overflow="hidden"
+          position="relative"
+        >
+          <Image
+            src="/icon.png"
+            alt="PicklePulse Logo"
+            as="img"
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            width="175%"
+            height="175%"
+            objectFit="cover"
+          />
+        </Box>
+      </Container>
+
+      {/* Sign In Content */}
+      <Container maxW="md" p={0}>
+        <VStack spacing={{ base: 4, md: 8 }} align="stretch">
+          <Heading size="xl">Sign in</Heading>
+
+          <Button
+            variant="outline"
+            size="lg"
+            leftIcon={<FcGoogle />}
+            w="100%"
+            h="45px"
+            borderColor="gray.300"
+            _hover={{ bg: 'gray.50' }}
+            onClick={() => {
+              toast({
+                title: "Coming Soon",
+                description: "Google sign in will be available soon!",
+                status: "info",
+                duration: 3000,
+              })
+            }}
+          >
+            Continue with Google
+          </Button>
+
+          <Box position="relative" py={2}>
+            <Divider />
+            <Text
+              position="absolute"
+              top="50%"
+              left="50%"
+              transform="translate(-50%, -50%)"
+              bg="white"
+              px={4}
+              fontSize="sm"
+              color="gray.500"
+            >
+              Or continue with
+            </Text>
+          </Box>
 
           <form onSubmit={handleLogin} style={{ width: '100%' }}>
-            <VStack spacing={4}>
+            <VStack spacing={3}>
               <FormControl isRequired>
-                <FormLabel>Email</FormLabel>
+                <FormLabel color="gray.700" fontSize="sm" mb={1}>Email Address</FormLabel>
                 <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
+                  size="lg"
+                  h="45px"
+                  borderColor="gray.300"
+                  _hover={{ borderColor: 'gray.400' }}
                 />
               </FormControl>
+
               <FormControl isRequired>
-                <FormLabel>Password</FormLabel>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                />
+                <HStack justify="space-between" mb={1}>
+                  <FormLabel color="gray.700" fontSize="sm" mb={0}>Password</FormLabel>
+                  <ChakraLink 
+                    as={Link} 
+                    to="/forgot-password" 
+                    color="blue.500" 
+                    fontSize="sm"
+                    fontWeight="medium"
+                  >
+                    Forget?
+                  </ChakraLink>
+                </HStack>
+                <InputGroup size="lg">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    borderColor="gray.300"
+                    h="45px"
+                    _hover={{ borderColor: 'gray.400' }}
+                  />
+                  <InputRightElement h="45px">
+                    <IconButton
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                      variant="ghost"
+                      onClick={() => setShowPassword(!showPassword)}
+                      h="45px"
+                    />
+                  </InputRightElement>
+                </InputGroup>
               </FormControl>
+
+              <Checkbox
+                isChecked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                colorScheme="blue"
+                size="md"
+                spacing={3}
+                alignSelf="flex-start"
+              >
+                Remember Me
+              </Checkbox>
+
               <Button
                 type="submit"
+                colorScheme="blue"
+                size="lg"
                 width="100%"
+                h="45px"
                 isLoading={isLoading}
-                loadingText="Logging in..."
+                loadingText="Signing in..."
+                mt={1}
               >
-                Log In
+                Sign in
               </Button>
             </VStack>
           </form>
-          <Text>
-            Don't have an account?{' '}
-            <Link to="/register">
-              <Text as="span" color="brand.500">
-                Sign up
-              </Text>
-            </Link>
-          </Text>
+
+          <HStack spacing={1} justify="center" pt={2}>
+            <Text color="gray.600" fontSize="sm">Don't have an account?</Text>
+            <ChakraLink 
+              as={Link} 
+              to="/register" 
+              color="blue.500"
+              fontWeight="medium"
+              fontSize="sm"
+            >
+              Sign up
+            </ChakraLink>
+          </HStack>
         </VStack>
-      </Box>
+      </Container>
     </Box>
   )
 }
