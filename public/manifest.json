@@ -1,0 +1,17 @@
+{
+  "name": "PicklePulse AI",
+  "short_name": "PicklePulse",
+  "description": "AI-powered pickleball analytics and matchmaking platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3182ce",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+} 

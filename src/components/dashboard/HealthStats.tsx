@@ -14,6 +14,7 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../services/supabase'
+import { useToast } from '@chakra-ui/react'
 
 type TimeRange = 'Weekly' | 'Bi-weekly' | 'Monthly'
 
@@ -36,6 +37,7 @@ const HealthStats = ({ isLoading }: HealthStatsProps) => {
     performance: 0
   })
   const [isLoadingStats, setIsLoadingStats] = useState(true)
+  const toast = useToast()
 
   const bg = useColorModeValue('white', 'gray.800')
   const itemBg = useColorModeValue('gray.50', 'gray.700')
@@ -50,24 +52,23 @@ const HealthStats = ({ isLoading }: HealthStatsProps) => {
 
   const loadAverageStats = async () => {
     try {
-      setIsLoadingStats(true)
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('No user found')
+      if (!user) {
+        // User not authenticated, silently return
+        setIsLoadingStats(false)
+        return
+      }
 
-      // Calculate date range
       const today = new Date()
-      const daysToSubtract = timeRange === 'Weekly' ? 7 : timeRange === 'Bi-weekly' ? 14 : 30
       const startDate = new Date(today)
-      startDate.setDate(today.getDate() - daysToSubtract)
+      startDate.setDate(today.getDate() - (timeRange === 'Weekly' ? 7 : timeRange === 'Bi-weekly' ? 14 : 30))
 
-      // Fetch stats within date range
       const { data, error } = await supabase
         .from('health_stats')
-        .select('sleep_hours, hunger, soreness, performance_rating')
+        .select('*')
         .eq('user_id', user.id)
         .gte('date', startDate.toISOString().split('T')[0])
         .lte('date', today.toISOString().split('T')[0])
-        .order('date', { ascending: false })
 
       if (error) throw error
 
@@ -89,6 +90,16 @@ const HealthStats = ({ isLoading }: HealthStatsProps) => {
       }
     } catch (error) {
       console.error('Error loading average stats:', error)
+      // Only show error toast if we have a user and something actually went wrong
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        toast({
+          title: 'Error loading stats',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+      }
     } finally {
       setIsLoadingStats(false)
     }
