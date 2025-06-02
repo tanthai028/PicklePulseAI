@@ -12,7 +12,6 @@ import {
   Link as ChakraLink,
 } from '@chakra-ui/react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
-import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
 interface AuthFormProps {
