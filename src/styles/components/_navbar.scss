@@ -1,0 +1,52 @@
+.app-logo {
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    .logo-bounce {
+      animation: logoBounce 0.5s ease-in-out;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-text {
+      transform: scale(1.02);
+    }
+  }
+}
+
+.logo-bounce {
+  transition: all 0.2s ease-in-out;
+  background: rgba(0, 0, 0, 0.04);
+
+  img {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  // &:hover img {
+  //   transform: translate(-50%, -50%) scale(1.02);
+  // }
+}
+
+.logo-text {
+  transition: transform 0.2s ease-in-out;
+}
+
+.nav-icon {
+  transition: all 0.2s ease-in-out !important;
+
+  &:hover {
+    transform: scale(1.1) !important;
+  }
+
+  &:active {
+    transform: scale(0.95) !important;
+  }
+}
+
+@keyframes logoBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+} 
