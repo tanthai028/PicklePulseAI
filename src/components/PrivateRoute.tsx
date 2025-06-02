@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { supabase } from '../services/supabase'
 import { Spinner, Center } from '@chakra-ui/react'
-import { isGuestUser } from '../services/guestMode'
+import { isGuestUser, exitGuestMode } from '../services/guestMode'
 
 interface PrivateRouteProps {
   children: React.ReactNode
@@ -17,7 +17,12 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
     checkUser()
     
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session)
+      const hasAuth = !!session
+      setIsAuthenticated(hasAuth)
+      // Exit guest mode if user is authenticated
+      if (hasAuth) {
+        exitGuestMode()
+      }
       setIsLoading(false)
     })
 
@@ -29,7 +34,12 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const checkUser = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      setIsAuthenticated(!!user)
+      const hasAuth = !!user
+      setIsAuthenticated(hasAuth)
+      // Exit guest mode if user is authenticated
+      if (hasAuth) {
+        exitGuestMode()
+      }
     } catch (error) {
       console.error('Error checking auth status:', error)
       setIsAuthenticated(false)
