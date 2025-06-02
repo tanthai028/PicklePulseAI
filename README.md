@@ -1,4 +1,4 @@
-# PicklePulse AI
+# PicklePulse
 
 A modern pickleball analytics and matchmaking platform built with React, TypeScript, and Supabase.
 
