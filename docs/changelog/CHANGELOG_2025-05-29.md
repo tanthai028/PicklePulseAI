@@ -1,4 +1,4 @@
-# PicklePulse AI Changelog
+# PicklePulse Changelog
 
 ## [Latest] - Mobile Responsiveness Improvements
 

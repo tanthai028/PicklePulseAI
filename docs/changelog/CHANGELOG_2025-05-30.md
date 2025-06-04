@@ -1,4 +1,4 @@
-# PicklePulse AI - Development Session Changelog
+# PicklePulse - Development Session Changelog
 Date: May 30, 2025
 
 ## [Session 1] - Initial Dashboard Development & UI Refinements

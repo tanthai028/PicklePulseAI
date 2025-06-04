@@ -13,7 +13,7 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
             manifest: {
-                name: 'PicklePulse AI',
+                name: 'PicklePulse',
                 short_name: 'PicklePulse',
                 description: 'Health and performance tracking for athletes',
                 theme_color: '#ffffff',

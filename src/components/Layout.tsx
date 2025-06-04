@@ -52,7 +52,7 @@ const Layout = ({ children }: Props) => {
                 fontWeight="bold"
                 color={useColorModeValue('gray.800', 'white')}
               >
-                PicklePulse AI
+                PicklePulse
               </Box>
             </RouterLink>
 
