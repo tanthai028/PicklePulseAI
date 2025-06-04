@@ -130,17 +130,20 @@ const Auth = () => {
       minH="100vh" 
       w="100%" 
       bg="white"
-      py={{ base: 4, md: 12 }}
+      py={{ base: 4, md: 16 }}
       px={{ base: 4, md: 8 }}
     >
       {/* Logo Section */}
-      <Container maxW="md" p={0} mb={{ base: 6, md: 12 }}>
+      <Container maxW="md" p={0} mb={{ base: 4, md: 8 }} textAlign="left">
         <Box
-          width="40px"
-          height="40px"
+          width={{ base: "50px", md: "100px" }}
+          height={{ base: "50px", md: "100px" }}
           borderRadius="full"
           overflow="hidden"
           position="relative"
+          mb={8}
+          className="logo-bounce"
+          boxShadow="lg"
         >
           <Image
             src="/icon.png"
@@ -155,11 +158,19 @@ const Auth = () => {
             objectFit="cover"
           />
         </Box>
+        <Text
+          fontSize={{ base: "3xl", md: "4xl" }}
+          fontWeight="bold"
+          color="gray.800"
+          mb={0}
+        >
+          Sign in
+        </Text>
       </Container>
 
       {/* Auth Content */}
       <Container maxW="md" p={0}>
-        <VStack spacing={{ base: 4, md: 8 }} align="stretch">
+        <VStack spacing={6} align="stretch">
           {/* Guest Mode Button */}
           <Button
             size="lg"
@@ -180,38 +191,50 @@ const Auth = () => {
               transform="translate(-50%, -50%)"
               bg="white"
               px={4}
-              fontSize="sm"
+              fontSize={{ base: "xs", md: "sm" }}
               color="gray.500"
+              whiteSpace="nowrap"
             >
-              Or sign in to save your data
+              or
             </Text>
           </Box>
 
-          <Tabs isFitted variant="soft-rounded" colorScheme="blue">
-            <TabList mb={4}>
-              <Tab fontWeight="medium">Sign In</Tab>
-              <Tab fontWeight="medium">Sign Up</Tab>
+          <Tabs variant="soft-rounded" colorScheme="blue" width="100%">
+            <TabList mb={6} width="100%" position="relative">
+              <Tab 
+                fontWeight="medium" 
+                width="50%"
+                _selected={{
+                  color: "blue.500",
+                  bg: "blue.50"
+                }}
+              >
+                Sign In
+              </Tab>
+              <Box 
+                position="absolute" 
+                left="50%" 
+                top="15%" 
+                height="70%" 
+                width="1px" 
+                transform="translateX(-50%)"
+              />
+              <Tab 
+                fontWeight="medium"
+                width="50%"
+                _selected={{
+                  color: "blue.500",
+                  bg: "blue.50"
+                }}
+              >
+                Sign Up
+              </Tab>
             </TabList>
 
             <TabPanels>
               {/* Sign In Panel */}
               <TabPanel p={0}>
-                <VStack spacing={4}>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    leftIcon={<FcGoogle />}
-                    w="100%"
-                    h="45px"
-                    borderColor="gray.300"
-                    _hover={{ bg: 'gray.50' }}
-                    onClick={handleGoogleClick}
-                    isDisabled={googleButtonDisabled}
-                    opacity={googleButtonDisabled ? 0.6 : 1}
-                  >
-                    Continue with Google
-                  </Button>
-
+                <VStack spacing={4} width="100%">
                   <Box position="relative" py={2} width="100%">
                     <Divider />
                     <Text
@@ -221,10 +244,11 @@ const Auth = () => {
                       transform="translate(-50%, -50%)"
                       bg="white"
                       px={4}
-                      fontSize="sm"
+                      fontSize={{ base: "xs", md: "sm" }}
                       color="gray.500"
+                      whiteSpace="nowrap"
                     >
-                      Or continue with
+                      Sign in details
                     </Text>
                   </Box>
 
@@ -239,22 +263,7 @@ const Auth = () => {
 
               {/* Sign Up Panel */}
               <TabPanel p={0}>
-                <VStack spacing={4}>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    leftIcon={<FcGoogle />}
-                    w="100%"
-                    h="45px"
-                    borderColor="gray.300"
-                    _hover={{ bg: 'gray.50' }}
-                    onClick={handleGoogleClick}
-                    isDisabled={googleButtonDisabled}
-                    opacity={googleButtonDisabled ? 0.6 : 1}
-                  >
-                    Continue with Google
-                  </Button>
-
+                <VStack spacing={4} width="100%">
                   <Box position="relative" py={2} width="100%">
                     <Divider />
                     <Text
@@ -264,10 +273,11 @@ const Auth = () => {
                       transform="translate(-50%, -50%)"
                       bg="white"
                       px={4}
-                      fontSize="sm"
+                      fontSize={{ base: "xs", md: "sm" }}
                       color="gray.500"
+                      whiteSpace="nowrap"
                     >
-                      Or continue with
+                      Create account
                     </Text>
                   </Box>
 
