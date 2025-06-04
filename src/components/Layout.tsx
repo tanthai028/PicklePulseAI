@@ -44,7 +44,7 @@ const Layout = ({ children }: Props) => {
         borderBottom="2px solid"
         borderColor={useColorModeValue('gray.100', 'gray.700')}
       >
-        <Container maxW="container.xl" px={{ base: 6, md: 6 }}>
+        <Container maxW="container.xl" px={{ base: 6, md: 10 }}>
           <Flex h={16} alignItems="center" justifyContent="space-between">
             <RouterLink to="/dashboard">
               <Box 
@@ -130,7 +130,7 @@ const Layout = ({ children }: Props) => {
           </Flex>
         </Container>
       </Box>
-      <Container maxW="container.xl" px={{ base: 3, md: 6 }} py={{ base: 4, md: 8 }}>
+      <Container maxW="container.xl" px={{ base: 3, md: 6 }} py={{ base: 3, md: 6 }}>
         {children}
       </Container>
     </Box>

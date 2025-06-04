@@ -62,7 +62,7 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <Box p={{ base: 2, md: 6 }} pb={{ base: '80px', lg: 6 }}>
+      <Box p={{ base: 2, md: 0 }} pb={{ base: '80px', lg: 6 }}>
         <SimpleGrid columns={{ base: 1, lg: 12 }} spacing={{ base: 4, md: 6 }}>
           {/* Health Stats Card */}
           <Box gridColumn={{ base: "1 / -1", lg: "span 12" }}>
@@ -74,7 +74,7 @@ const Dashboard = () => {
           </Box>
 
           {/* Skills Board Card */}
-          <Box gridColumn={{ base: "1 / -1", md: "span 1", lg: "span 8" }}>
+          <Box gridColumn={{ base: "1 / -1", md: "span 1", lg: "span 12" }}>
             <SkillsBoard />
           </Box>
         </SimpleGrid>
