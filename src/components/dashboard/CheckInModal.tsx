@@ -88,9 +88,17 @@ const CheckInModal = ({ isOpen, onClose, onComplete }: CheckInModalProps) => {
   const getSliderColor = (name: string, value: number) => {
     // For muscle soreness, reverse the color logic
     if (name === 'soreness') {
-      if (value <= 1) return 'green.500'
-      if (value <= 2) return 'yellow.400'
-      if (value <= 3) return 'orange.400'
+      if (value <= 2) return 'green.500'
+      if (value <= 3) return 'yellow.400'
+      if (value <= 4) return 'orange.400'
+      return 'red.500'
+    }
+
+    // Special logic for sleep hours
+    if (name === 'sleep') {
+      if (value >= 8) return 'green.500'
+      if (value >= 7) return 'yellow.400'
+      if (value >= 6) return 'orange.400'
       return 'red.500'
     }
 
