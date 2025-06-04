@@ -44,7 +44,7 @@ const Layout = ({ children }: Props) => {
         borderBottom="2px solid"
         borderColor={useColorModeValue('gray.100', 'gray.700')}
       >
-        <Container maxW="container.xl" px={{ base: 6, md: 10 }}>
+        <Container maxW="container.xl" px={{ base: 4, md: 6 }}>
           <Flex h={16} alignItems="center" justifyContent="space-between">
             <RouterLink to="/dashboard">
               <Box 
@@ -52,6 +52,7 @@ const Layout = ({ children }: Props) => {
                 display="flex"
                 alignItems="center"
                 gap={3}
+                ml={{ base: 2, md: 0 }}  // This would be 8px on mobile, 0 on desktop
               >
                 <Box
                   position="relative"
