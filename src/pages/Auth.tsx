@@ -15,7 +15,6 @@ import {
   Divider,
   useDisclosure,
 } from '@chakra-ui/react'
-import { FcGoogle } from 'react-icons/fc'
 import { useNavigate } from 'react-router-dom'
 import { signInWithEmail, signUpWithEmail } from '../services/supabase'
 import { continueAsGuest } from '../services/guestMode'
@@ -24,7 +23,7 @@ import ForgotPasswordModal from '../components/auth/ForgotPasswordModal'
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const [googleButtonDisabled, setGoogleButtonDisabled] = useState(false)
+  // const [googleButtonDisabled, setGoogleButtonDisabled] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
   const navigate = useNavigate()
@@ -40,20 +39,20 @@ const Auth = () => {
     navigate('/dashboard')
   }
 
-  const handleGoogleClick = () => {
-    if (googleButtonDisabled) return;
+  // const handleGoogleClick = () => {
+  //   if (googleButtonDisabled) return;
     
-    setGoogleButtonDisabled(true);
-    toast({
-      title: "Coming Soon",
-      description: "Google sign in will be available soon!",
-      status: "info",
-      duration: 3000,
-    });
+  //   setGoogleButtonDisabled(true);
+  //   toast({
+  //     title: "Coming Soon",
+  //     description: "Google sign in will be available soon!",
+  //     status: "info",
+  //     duration: 3000,
+  //   });
 
-    // Re-enable after 5 seconds
-    setTimeout(() => setGoogleButtonDisabled(false), 5000);
-  };
+  //   // Re-enable after 5 seconds
+  //   setTimeout(() => setGoogleButtonDisabled(false), 5000);
+  // };
 
   const handleSignIn = async (data: { email: string; password: string }) => {
     setIsLoading(true)
